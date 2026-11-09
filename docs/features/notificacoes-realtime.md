@@ -27,12 +27,12 @@ schedule/DateControlReminderJob (disparado por uma rotina)
   → grava Notification no Postgres
   → SELECT pg_notify('notifications_channel', '<id>')
        ↓ (Postgres entrega a todo LISTEN ativo no canal)
-backend/AgentOffice.Api — PostgresNotificationListener (BackgroundService)
+backend/Moneta.Api — PostgresNotificationListener (BackgroundService)
   → recebe o payload (id da notificação)
   → busca a notificação completa via INotificationService
   → repassa para o hub SignalR
        ↓
-backend/AgentOffice.Api — NotificationsHub (/hubs/notifications)
+backend/Moneta.Api — NotificationsHub (/hubs/notifications)
   → Clients.All.SendAsync("ReceiveNotification", dto)
        ↓
 frontend — NotificationsProvider (SignalR client)

@@ -1,16 +1,16 @@
 # Arquitetura do backend
 
-O backend é uma solution .NET 10 (`AgentOffice.slnx`) dividida em 5 projetos, seguindo
+O backend é uma solution .NET 10 (`Moneta.slnx`) dividida em 5 projetos, seguindo
 Clean Architecture / Onion Architecture. A regra de dependência é sempre "de fora para
 dentro" — nada no centro (`Domain`) conhece as camadas externas.
 
 ```
 src/
-  AgentOffice.Domain/        núcleo: entidades, enums, exceções de domínio. Sem dependências externas.
-  AgentOffice.Application/   casos de uso: DTOs, interfaces de repositório, services. Depende só de Domain.
-  AgentOffice.Infra/         DbContext (EF Core), migrations, seed. Depende de Domain.
-  AgentOffice.Repository/    implementações EF Core das interfaces de repositório. Depende de Domain + Application + Infra.
-  AgentOffice.Api/           ASP.NET Core: controllers, Program.cs, middleware. Depende de Application + Repository + Infra (só para DI).
+  Moneta.Domain/        núcleo: entidades, enums, exceções de domínio. Sem dependências externas.
+  Moneta.Application/   casos de uso: DTOs, interfaces de repositório, services. Depende só de Domain.
+  Moneta.Infra/         DbContext (EF Core), migrations, seed. Depende de Domain.
+  Moneta.Repository/    implementações EF Core das interfaces de repositório. Depende de Domain + Application + Infra.
+  Moneta.Api/           ASP.NET Core: controllers, Program.cs, middleware. Depende de Application + Repository + Infra (só para DI).
 ```
 
 Grafo de dependências:
@@ -70,14 +70,14 @@ atrapalha mais do que ajuda num projeto deste tamanho.
 dotnet build
 
 # rodar a API (a partir de backend/)
-dotnet run --project src/AgentOffice.Api
+dotnet run --project src/Moneta.Api
 
 # nova migration
 dotnet ef migrations add NomeDaMigration \
-  --project src/AgentOffice.Infra --startup-project src/AgentOffice.Api \
+  --project src/Moneta.Infra --startup-project src/Moneta.Api \
   --output-dir Persistence/Migrations
 
 # aplicar migrations
 dotnet ef database update \
-  --project src/AgentOffice.Infra --startup-project src/AgentOffice.Api
+  --project src/Moneta.Infra --startup-project src/Moneta.Api
 ```

@@ -1,9 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/AgentOffice.Api/AgentOffice.Api.csproj" />
-    <Project Path="src/AgentOffice.Application/AgentOffice.Application.csproj" />
-    <Project Path="src/AgentOffice.Domain/AgentOffice.Domain.csproj" />
-    <Project Path="src/AgentOffice.Infra/AgentOffice.Infra.csproj" />
-    <Project Path="src/AgentOffice.Repository/AgentOffice.Repository.csproj" />
-  </Folder>
-</Solution>

@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Moneta.Api/Moneta.Api.csproj" />
+    <Project Path="src/Moneta.Application/Moneta.Application.csproj" />
+    <Project Path="src/Moneta.Domain/Moneta.Domain.csproj" />
+    <Project Path="src/Moneta.Infra/Moneta.Infra.csproj" />
+    <Project Path="src/Moneta.Repository/Moneta.Repository.csproj" />
+  </Folder>
+</Solution>
