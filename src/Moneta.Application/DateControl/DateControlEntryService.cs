@@ -22,6 +22,39 @@ public class DateControlEntryService(
         return entries.Select(e => ToDto(e, counts.GetValueOrDefault(e.Id))).ToList();
     }
 
+    public async Task<MonthlyDashboardDto> GetMonthlyDashboardAsync(
+        Guid moduleId, int year, CancellationToken ct = default)
+    {
+        if (year is < 2000 or > 2100)
+            throw new DomainValidationException("Ano inválido.");
+
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var rows = await repository.GetMonthlyAggregateAsync(moduleId, year, today, ct);
+        return BuildMonthlyDashboard(year, rows);
+    }
+
+    /// <summary>Sempre devolve os 12 meses (zero quando não há lançamentos).</summary>
+    public static MonthlyDashboardDto BuildMonthlyDashboard(int year, IEnumerable<DashboardAggregateRow> rows)
+    {
+        var list = rows.ToList();
+        decimal Sum(int month, DashboardBucket bucket) =>
+            list.Where(r => r.Month == month && r.Bucket == bucket).Sum(r => r.Total);
+
+        var months = Enumerable.Range(1, 12)
+            .Select(m => new MonthlyDashboardMonthDto(
+                m, Sum(m, DashboardBucket.Paid), Sum(m, DashboardBucket.Overdue), Sum(m, DashboardBucket.Pending)))
+            .ToList();
+        return new MonthlyDashboardDto(year, months);
+    }
+
+    /// <summary>Paga = status Paid; não paga com vencimento anterior a hoje = vencida; senão pendente.
+    /// Não depende do Status Overdue gravado (só atualizado pelo worker). Espelha o CASE da query
+    /// em DateControlEntryRepository.GetMonthlyAggregateAsync.</summary>
+    public static DashboardBucket Classify(DateControlEntryStatus status, DateOnly dueDate, DateOnly today) =>
+        status == DateControlEntryStatus.Paid ? DashboardBucket.Paid
+        : dueDate < today ? DashboardBucket.Overdue
+        : DashboardBucket.Pending;
+
     public async Task<DateControlEntryDto?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         var entry = await repository.GetByIdAsync(id, ct);

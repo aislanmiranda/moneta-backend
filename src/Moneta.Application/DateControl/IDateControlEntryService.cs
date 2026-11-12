@@ -5,6 +5,7 @@ namespace Moneta.Application.DateControl;
 public interface IDateControlEntryService
 {
     Task<List<DateControlEntryDto>> GetAllAsync(Guid moduleId, CancellationToken ct = default);
+    Task<MonthlyDashboardDto> GetMonthlyDashboardAsync(Guid moduleId, int year, CancellationToken ct = default);
     Task<DateControlEntryDto?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<DateControlEntryDto> CreateAsync(CreateDateControlEntryDto input, CancellationToken ct = default);
     Task<DateControlEntryDto?> UpdateAsync(Guid id, UpdateDateControlEntryDto input, CancellationToken ct = default);

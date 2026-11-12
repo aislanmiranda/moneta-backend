@@ -6,6 +6,9 @@ public interface IDateControlEntryRepository
 {
     /// <summary>Loaded with DateControlSource and DateControlParty included, for DTO projection.</summary>
     Task<List<DateControlEntry>> GetAllAsync(Guid moduleId, CancellationToken ct = default);
+    /// <summary>Soma de Amount por mês e classificação (paga/vencida/pendente) no ano, agregada em SQL.</summary>
+    Task<List<DashboardAggregateRow>> GetMonthlyAggregateAsync(
+        Guid moduleId, int year, DateOnly today, CancellationToken ct = default);
     Task<DateControlEntry?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task AddAsync(DateControlEntry entry, CancellationToken ct = default);
     Task AddRangeAsync(IEnumerable<DateControlEntry> entries, CancellationToken ct = default);

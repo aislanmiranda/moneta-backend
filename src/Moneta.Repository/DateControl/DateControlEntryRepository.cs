@@ -1,5 +1,6 @@
 using Moneta.Application.DateControl;
 using Moneta.Domain.Entities;
+using Moneta.Domain.Enums;
 using Moneta.Infra.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,24 @@ public class DateControlEntryRepository(AppDbContext db) : IDateControlEntryRepo
 
     public Task<List<DateControlEntry>> GetAllAsync(Guid moduleId, CancellationToken ct = default) =>
         WithRelated(db.DateControlEntries).Where(e => e.ModuleId == moduleId).AsNoTracking().ToListAsync(ct);
+
+    public async Task<List<DashboardAggregateRow>> GetMonthlyAggregateAsync(
+        Guid moduleId, int year, DateOnly today, CancellationToken ct = default)
+    {
+        var start = new DateOnly(year, 1, 1);
+        var end = new DateOnly(year, 12, 31);
+        var grouped = await db.DateControlEntries
+            .AsNoTracking()
+            .Where(e => e.ModuleId == moduleId && e.DueDate >= start && e.DueDate <= end)
+            .GroupBy(e => new
+            {
+                e.DueDate.Month,
+                Bucket = e.Status == DateControlEntryStatus.Paid ? 0 : e.DueDate < today ? 1 : 2,
+            })
+            .Select(g => new { g.Key.Month, g.Key.Bucket, Total = g.Sum(x => x.Amount) })
+            .ToListAsync(ct);
+        return grouped.Select(g => new DashboardAggregateRow(g.Month, (DashboardBucket)g.Bucket, g.Total)).ToList();
+    }
 
     public Task<DateControlEntry?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         WithRelated(db.DateControlEntries).FirstOrDefaultAsync(e => e.Id == id, ct);
