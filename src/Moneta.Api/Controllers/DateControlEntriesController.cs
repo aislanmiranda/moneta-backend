@@ -11,6 +11,11 @@ public class DateControlEntriesController(IDateControlEntryService service) : Co
     public async Task<ActionResult<IEnumerable<DateControlEntryDto>>> GetAll(Guid moduleId, CancellationToken ct) =>
         Ok(await service.GetAllAsync(moduleId, ct));
 
+    [HttpGet("dashboard/monthly")]
+    public async Task<ActionResult<MonthlyDashboardDto>> GetMonthlyDashboard(
+        Guid moduleId, [FromQuery] int? year, CancellationToken ct) =>
+        Ok(await service.GetMonthlyDashboardAsync(moduleId, year ?? DateTime.Now.Year, ct));
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<DateControlEntryDto>> GetById(Guid moduleId, Guid id, CancellationToken ct)
     {

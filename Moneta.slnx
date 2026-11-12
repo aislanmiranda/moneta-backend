@@ -6,4 +6,7 @@
     <Project Path="src/Moneta.Infra/Moneta.Infra.csproj" />
     <Project Path="src/Moneta.Repository/Moneta.Repository.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Moneta.Tests/Moneta.Tests.csproj" />
+  </Folder>
 </Solution>
