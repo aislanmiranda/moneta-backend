@@ -6,6 +6,9 @@
 # - Ordem: backend-migrate é publicada ANTES de backend (o deploy não pode ver
 #   uma API nova sem a migration correspondente).
 # - Sem tag "latest". Credenciais só via GitHub Secrets (HARBOR_USERNAME / HARBOR_PASSWORD).
+# - Job "schedule": o moneta-schedule compila Domain/Application/Infra/Repository deste repo,
+#   então todo build do backend recompila o scheduler com este commit (workflow reutilizável
+#   do moneta-schedule). Em PR só compila; no push da main publica e atualiza a tag.
 name: build-push
 
 on:
@@ -121,3 +124,13 @@ jobs:
         env:
           TAG: ${{ steps.vars.outputs.tag }}
           PUBLISH_LABEL: ${{ env.PUBLISH == 'true' && 'publicadas no Harbor' || 'só build, sem push' }}
+
+  schedule:
+    needs: build-push
+    uses: aislanmiranda/moneta-schedule/.github/workflows/build-push.yml@main
+    with:
+      backend_ref: ${{ github.event.pull_request.head.sha || github.sha }}
+    secrets:
+      HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+      HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+      K3S_DEPLOY_KEY: ${{ secrets.K3S_DEPLOY_KEY }}
