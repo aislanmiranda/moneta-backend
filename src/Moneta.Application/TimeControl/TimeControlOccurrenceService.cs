@@ -1,3 +1,4 @@
+using Moneta.Domain;
 using Moneta.Domain.Entities;
 using Moneta.Domain.Enums;
 
@@ -8,7 +9,7 @@ public class TimeControlOccurrenceService(ITimeControlOccurrenceRepository repos
     public async Task<List<TimeControlOccurrenceDto>> GetAllAsync(
         Guid moduleId, DateOnly? from, DateOnly? to, CancellationToken ct = default)
     {
-        var today = DateOnly.FromDateTime(DateTime.Now);
+        var today = AppTime.Today;
         var occurrences = await repository.GetAllAsync(moduleId, from ?? today, to ?? today, ct);
         return occurrences.Select(ToDto).ToList();
     }
