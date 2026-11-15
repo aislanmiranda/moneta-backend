@@ -1,3 +1,4 @@
+using Moneta.Domain;
 using Moneta.Application.DateControl;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +15,7 @@ public class DateControlEntriesController(IDateControlEntryService service) : Co
     [HttpGet("dashboard/monthly")]
     public async Task<ActionResult<MonthlyDashboardDto>> GetMonthlyDashboard(
         Guid moduleId, [FromQuery] int? year, CancellationToken ct) =>
-        Ok(await service.GetMonthlyDashboardAsync(moduleId, year ?? DateTime.Now.Year, ct));
+        Ok(await service.GetMonthlyDashboardAsync(moduleId, year ?? AppTime.Today.Year, ct));
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<DateControlEntryDto>> GetById(Guid moduleId, Guid id, CancellationToken ct)

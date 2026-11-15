@@ -1,3 +1,4 @@
+using Moneta.Domain;
 using System.Text.Json;
 using Moneta.Application.Modules;
 using Moneta.Domain.Entities;
@@ -11,7 +12,7 @@ public class RoutineService(
     IModuleRepository moduleRepository
 ) : IRoutineService
 {
-    private const string TimeZone = "UTC";
+    private static readonly string TimeZone = AppTime.Zone.Id;
     private static readonly JsonSerializerOptions PayloadJsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     public async Task<List<RoutineDto>> GetAllAsync(CancellationToken ct = default) =>

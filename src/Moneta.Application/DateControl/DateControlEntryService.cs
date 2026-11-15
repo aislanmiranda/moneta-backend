@@ -1,3 +1,4 @@
+using Moneta.Domain;
 using Moneta.Domain.Entities;
 using Moneta.Domain.Enums;
 using Moneta.Domain.Exceptions;
@@ -28,7 +29,7 @@ public class DateControlEntryService(
         if (year is < 2000 or > 2100)
             throw new DomainValidationException("Ano inválido.");
 
-        var today = DateOnly.FromDateTime(DateTime.Now);
+        var today = AppTime.Today;
         var rows = await repository.GetMonthlyAggregateAsync(moduleId, year, today, ct);
         return BuildMonthlyDashboard(year, rows);
     }
@@ -243,7 +244,7 @@ public class DateControlEntryService(
     {
         if (currentStatus == DateControlEntryStatus.Paid) return DateControlEntryStatus.Paid;
 
-        var today = DateOnly.FromDateTime(DateTime.Now);
+        var today = AppTime.Today;
         return dueDate < today ? DateControlEntryStatus.Overdue : DateControlEntryStatus.Pending;
     }
 
